@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:generic_company_application/screens/utils/helpers.dart';
 import 'package:generic_company_application/services/post_service.dart';
 
 class AddPostScreen extends StatefulWidget {
-  const AddPostScreen({super.key});
+  final user = FirebaseAuth.instance.currentUser?.email ?? "User";
+  AddPostScreen({super.key});
 
   @override
   State<AddPostScreen> createState() => _AddPostScreenState();
@@ -17,22 +20,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
     super.dispose();
   }
 
+  void postContent() async {
+    if (createTextController.text.trim().isEmpty) return;
 
-void postContent() async {
-  if (createTextController.text.trim().isEmpty) return;
+    await PostService().addPost(
+      title: "New Post",
+      content: createTextController.text.trim(),
+    );
 
-  await PostService().addPost(
-    title: "New Post",
-    content: createTextController.text.trim(),
-  );
+    createTextController.clear();
 
-  createTextController.clear();
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text("Post added")),
-  );
-}
-
+    Helpers.showSuccessSnackbar(context, "Post added");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +49,14 @@ void postContent() async {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(
-                    children: const [
+                    children: [
                       CircleAvatar(radius: 22, child: Icon(Icons.person)),
                       SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Syed Noman",
+                            widget.user,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/screens/common_widgets/text_fields_widget.dart';
 import 'package:generic_company_application/screens/post_screens/posts_view_screen.dart';
+import 'package:generic_company_application/screens/utils/helpers.dart';
 import 'package:generic_company_application/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,23 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (error == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Login Successful ✅"),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
-          ),
-        );
+        Helpers.showSuccessSnackbar(context, "Login Successful ✅");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => PostsViewScreen()),
         );
 
         _formKey.currentState!.reset();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error), backgroundColor: Colors.red),
-        );
+        Helpers.showErrorSnackbar(context, error);
       }
     }
   }

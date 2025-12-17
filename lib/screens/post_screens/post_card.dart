@@ -7,6 +7,10 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int timestamp = post.timeCreated;
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    String formattedDate = "${date.month}/${date.day}/${date.year}";
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       elevation: 3,
@@ -31,7 +35,7 @@ class PostCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      post.timeCreated.toString(),
+                      formattedDate,
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
@@ -104,28 +108,3 @@ class PostAction extends StatelessWidget {
     );
   }
 }
-
-// class PostCard extends StatelessWidget {
-//   final PostModel post;
-
-//   const PostCard({super.key, required this.post});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       child: Padding(
-//         padding: const EdgeInsets.all(12),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(post.createdUser.name,
-//                 style: const TextStyle(fontWeight: FontWeight.bold)),
-//             Text(post.title),
-//             Text(post.content),
-//             Text("👍 ${post.likes}"),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

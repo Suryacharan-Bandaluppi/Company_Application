@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:generic_company_application/screens/utils/helpers.dart';
 import 'package:generic_company_application/screens/common_widgets/text_fields_widget.dart';
 import 'package:generic_company_application/screens/post_screens/posts_view_screen.dart';
 import 'package:generic_company_application/services/auth_service.dart';
@@ -38,27 +39,14 @@ class _SignUpScreenState extends State<SignupScreen> {
       );
 
       if (error == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Signup Successful 🎉"),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 2),
-          ),
-        );
+          
+        Helpers.showSuccessSnackbar(context, "Signup Successful 🎉");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => PostsViewScreen()),
         );
         _formKey.currentState!.reset();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        Helpers.showErrorSnackbar(context, error);
       }
     }
   }
