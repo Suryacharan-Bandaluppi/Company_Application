@@ -24,7 +24,7 @@ class PostModel {
     required this.comments,
     required this.createdUser,
   });
-
+  
   /// Convert Post → Map (for Firebase)
   Map<String, dynamic> toMap() {
     return {

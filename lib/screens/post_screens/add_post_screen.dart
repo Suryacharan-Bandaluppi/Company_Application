@@ -13,23 +13,27 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   final TextEditingController createTextController = TextEditingController();
+  final TextEditingController titleTextController = TextEditingController();
 
   @override
   void dispose() {
     createTextController.dispose();
+    titleTextController.dispose();
     super.dispose();
   }
 
   void postContent() async {
-    if (createTextController.text.trim().isEmpty) return;
+    if (createTextController.text.trim().isEmpty ||
+        titleTextController.text.trim().isEmpty)
+      return;
 
     await PostService().addPost(
-      title: "New Post",
+      title: titleTextController.text.trim(),
       content: createTextController.text.trim(),
     );
 
     createTextController.clear();
-
+    titleTextController.clear();
     Helpers.showSuccessSnackbar(context, "Post added");
   }
 
@@ -66,6 +70,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         ],
                       ),
                     ],
+                  ),
+                ),
+              ),
+
+              ///Title Card
+              Card(
+                margin: const EdgeInsets.all(10),
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: TextField(
+                    controller: titleTextController,
+                    decoration: const InputDecoration(
+                      hintText: "Title of the Post",
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
               ),
@@ -119,7 +139,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 ),
               ),
 
-              const SizedBox(height: 200),
+              const SizedBox(height: 150),
 
               /// POST BUTTON
               SizedBox(

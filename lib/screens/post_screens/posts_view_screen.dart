@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
 import 'package:generic_company_application/screens/home_screen.dart';
 import 'package:generic_company_application/screens/post_screens/add_post_screen.dart';
+import 'package:generic_company_application/screens/post_screens/current_user_posts_view_screen.dart';
 import 'package:generic_company_application/screens/post_screens/post_card.dart';
+import 'package:generic_company_application/screens/utils/helpers.dart';
 import 'package:generic_company_application/services/auth_service.dart';
 import 'package:generic_company_application/services/post_service.dart';
 
@@ -17,6 +19,7 @@ class _PostViewScreenState extends State<PostsViewScreen> {
   void logoutbutton() async {
     final authService = AuthService();
     authService.logout();
+    Helpers.showSuccessSnackbar(context, "Logged Out Successfully ✅");
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const HomeScreen()),
       (route) => false,
@@ -36,6 +39,18 @@ class _PostViewScreenState extends State<PostsViewScreen> {
               Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (context) => AddPostScreen()));
+            },
+          ),
+
+          IconButton(
+            icon: const CircleAvatar(radius: 15, child: Icon(Icons.person)),
+            tooltip: 'Profile',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CurrentUserPostsViewScreen(),
+                ),
+              );
             },
           ),
           IconButton(

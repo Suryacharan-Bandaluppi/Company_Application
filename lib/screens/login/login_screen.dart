@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:generic_company_application/screens/common_widgets/text_fields_widget.dart';
+import 'package:generic_company_application/screens/widgets/text_fields_widget.dart';
 import 'package:generic_company_application/screens/post_screens/posts_view_screen.dart';
 import 'package:generic_company_application/screens/utils/helpers.dart';
 import 'package:generic_company_application/services/auth_service.dart';

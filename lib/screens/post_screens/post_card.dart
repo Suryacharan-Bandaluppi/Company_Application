@@ -1,15 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
+import 'package:generic_company_application/screens/widgets/edit_post_dailog.dart';
+import 'package:generic_company_application/services/post_service.dart';
 
 class PostCard extends StatelessWidget {
   final PostModel post;
-  const PostCard({super.key, required this.post});
-
+  final bool enableEditButton;
+  final bool enableDeleteButton;
+  final bool enableLikeButton;
+  const PostCard({
+    super.key,
+    required this.post,
+    this.enableEditButton = false,
+    this.enableDeleteButton = false,
+    this.enableLikeButton = true,
+  });
   @override
   Widget build(BuildContext context) {
     int timestamp = post.timeCreated;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
     String formattedDate = "${date.month}/${date.day}/${date.year}";
+
+    void _confirmDelete(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Delete Post"),
+          content: const Text("Are you sure you want to delete this post?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await PostService().deletePost(post.id);
+                Navigator.pop(context);
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -40,6 +73,24 @@ class PostCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                Spacer(),
+                if (enableDeleteButton)
+                  IconButton(
+                    onPressed: () {
+                      _confirmDelete(context);
+                    },
+                    icon: Icon(Icons.delete),
+                  ),
+                if (enableEditButton)
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => EditPostDialog(post: post),
+                      );
+                    },
+                    icon: Icon(Icons.edit),
+                  ),
               ],
             ),
 
@@ -82,8 +133,10 @@ class PostCard extends StatelessWidget {
             /// ACTION BUTTONS
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                PostAction(icon: Icons.thumb_up_alt_outlined, label: "Like"),
+              children: [
+                if (enableLikeButton) ...[
+                  PostAction(icon: Icons.thumb_up_alt_outlined, label: "Like"),
+                ],
                 PostAction(icon: Icons.comment_outlined, label: "Comment"),
               ],
             ),
