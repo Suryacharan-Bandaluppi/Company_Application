@@ -22,6 +22,9 @@ dependencies:
   #Accesing Image from gallery
   image_picker: ^1.2.1
 
+  #Navigation
+  go_router: ^17.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

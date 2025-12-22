@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/widgets/text_fields_widget.dart';
-import 'package:generic_company_application/screens/post_screens/posts_view_screen.dart';
-import 'package:generic_company_application/screens/utils/helpers.dart';
+import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/services/auth_service.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,10 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (error == null) {
         Helpers.showSuccessSnackbar(context, "Login Successful ✅");
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => PostsViewScreen()),
-        );
-
+        context.go(AppRoutes.viewPosts);
         _formKey.currentState!.reset();
       } else {
         Helpers.showErrorSnackbar(context, error);
@@ -118,14 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 15),
 
-              // TextButton(
-              //   onPressed: () {
-              //     Navigator.of(context).push(
-              //       MaterialPageRoute(builder: (context) => SignupScreen()),
-              //     );
-              //   },
-              //   child: const Text("Don't have an account? Sign Up"),
-              // ),
             ],
           ),
         ),

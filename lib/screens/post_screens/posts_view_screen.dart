@@ -1,87 +1,160 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
-import 'package:generic_company_application/screens/home_screen.dart';
-import 'package:generic_company_application/screens/post_screens/add_post_screen.dart';
-import 'package:generic_company_application/screens/post_screens/current_user_posts_view_screen.dart';
+import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/post_screens/post_card.dart';
-import 'package:generic_company_application/screens/utils/helpers.dart';
+import 'package:generic_company_application/screens/widgets/expandable_fab_widget.dart';
+import 'package:generic_company_application/utils/helpers.dart';
+import 'package:generic_company_application/screens/widgets/app_drawer.dart';
 import 'package:generic_company_application/services/auth_service.dart';
 import 'package:generic_company_application/services/post_service.dart';
+import 'package:go_router/go_router.dart';
 
 class PostsViewScreen extends StatefulWidget {
   const PostsViewScreen({super.key});
 
   @override
-  State<PostsViewScreen> createState() => _PostViewScreenState();
+  State<PostsViewScreen> createState() => _PostsViewScreenState();
 }
 
-class _PostViewScreenState extends State<PostsViewScreen> {
-  void logoutbutton() async {
-    final authService = AuthService();
-    authService.logout();
-    Helpers.showSuccessSnackbar(context, "Logged Out Successfully ✅");
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-      (route) => false,
+class _PostsViewScreenState extends State<PostsViewScreen> {
+  final List<PostModel> posts = [];
+  final ScrollController _scrollController = ScrollController();
+  StreamSubscription<PostModel>? _newPostSubscription;
+  StreamSubscription<String>? _deletePostSubscription;
+  StreamSubscription<PostModel>? _editPostSubscription;
+
+  bool _isLoading = false;
+  bool _hasMore = true;
+  int? _lastTimeCreated;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPosts();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !_isLoading &&
+          _hasMore) {
+        _loadPosts();
+      }
+    });
+  }
+
+  Future<void> _loadPosts() async {
+    setState(() => _isLoading = true);
+
+    final newPosts = await postService.fetchPosts(
+      limit: 10,
+      lastTimeCreated: _lastTimeCreated,
     );
+
+    if (newPosts.isEmpty) {
+      _hasMore = false;
+    } else {
+      _lastTimeCreated = newPosts.last.timeCreated;
+      posts.addAll(newPosts);
+
+      // START realtime listener only once
+      if (posts.isNotEmpty && _newPostSubscription == null) {
+        _startRealtimeListener(posts.first.timeCreated);
+        _startDeleteListener();
+        _startEditListener();
+      }
+    }
+
+    setState(() => _isLoading = false);
+  }
+
+  Future<void> _refreshPosts() async {
+    posts.clear();
+    _lastTimeCreated = null;
+    _hasMore = true;
+    await _loadPosts();
+  }
+
+  void _startRealtimeListener(int latestTimeCreated) {
+    _newPostSubscription = postService
+        .listenForNewPosts(latestTimeCreated)
+        .listen((newPost) {
+          setState(() {
+            posts.insert(0, newPost);
+          });
+        });
+  }
+
+  void _startDeleteListener() {
+    _deletePostSubscription = postService.listenForDeletedPosts().listen((
+      deletedPostId,
+    ) {
+      setState(() {
+        posts.removeWhere((post) => post.id == deletedPostId);
+      });
+    });
+  }
+
+  void _startEditListener() {
+    _editPostSubscription = postService.listenForUpdatedPosts().listen((
+      updatedPost,
+    ) {
+      final index = posts.indexWhere((post) => post.id == updatedPost.id);
+
+      if (index != -1) {
+        setState(() {
+          posts[index] = updatedPost;
+        });
+      }
+    });
+  }
+
+  void logoutbutton() async {
+    _newPostSubscription?.cancel();
+    _deletePostSubscription?.cancel();
+    _editPostSubscription?.cancel();
+
+    await AuthService().logout();
+    Helpers.showSuccessSnackbar(context, "Logged Out Successfully ✅");
+    context.go(AppRoutes.home);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _newPostSubscription?.cancel();
+    _deletePostSubscription?.cancel();
+    _editPostSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Posts ViewScreen"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_box),
-            tooltip: 'Add Post',
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (context) => AddPostScreen()));
-            },
-          ),
+      appBar: AppBar(title: const Text("Posts")),
+      drawer: AppDrawer(logout: logoutbutton),
+      body: RefreshIndicator(
+        onRefresh: _refreshPosts,
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: posts.length + 1,
+          itemBuilder: (context, index) {
+            if (index == posts.length) {
+              return _isLoading
+                  ? const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : const SizedBox.shrink();
+              // return SizedBox.shrink();
+            }
 
-          IconButton(
-            icon: const CircleAvatar(radius: 15, child: Icon(Icons.person)),
-            tooltip: 'Profile',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CurrentUserPostsViewScreen(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () {
-              logoutbutton();
-            },
-          ),
-        ],
+            return PostCard(post: posts[index]);
+          },
+        ),
       ),
-      body: StreamBuilder<List<PostModel>>(
-        stream: PostService().getPosts(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final posts = snapshot.data!;
-          if (posts.isEmpty) {
-            return const Center(child: Text("No posts yet"));
-          }
-
-          return ListView.builder(
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              return PostCard(post: posts[index]);
-            },
-          );
-        },
-      ),
+      floatingActionButton: const ExpandableFab(),
     );
   }
 }

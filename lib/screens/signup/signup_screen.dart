@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:generic_company_application/screens/utils/helpers.dart';
+import 'package:generic_company_application/routes/app_routes.dart';
+import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/screens/widgets/text_fields_widget.dart';
-import 'package:generic_company_application/screens/post_screens/posts_view_screen.dart';
 import 'package:generic_company_application/services/auth_service.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -23,6 +25,8 @@ class _SignUpScreenState extends State<SignupScreen> {
       TextEditingController();
   final TextEditingController otpController = TextEditingController();
 
+
+
   // Static OTP
   final String staticOtp = "123456";
 
@@ -39,12 +43,11 @@ class _SignUpScreenState extends State<SignupScreen> {
       );
 
       if (error == null) {
-          
+        await FirebaseAuth.instance.currentUser?.updateProfile(displayName: userController.text);
         Helpers.showSuccessSnackbar(context, "Signup Successful 🎉");
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => PostsViewScreen()),
-        );
+        context.go(AppRoutes.home);
         _formKey.currentState!.reset();
+
       } else {
         Helpers.showErrorSnackbar(context, error);
       }

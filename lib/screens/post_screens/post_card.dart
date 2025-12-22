@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
+import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/screens/widgets/edit_post_dailog.dart';
 import 'package:generic_company_application/services/post_service.dart';
+import 'package:go_router/go_router.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final PostModel post;
   final bool enableEditButton;
   final bool enableDeleteButton;
@@ -15,13 +17,19 @@ class PostCard extends StatelessWidget {
     this.enableDeleteButton = false,
     this.enableLikeButton = true,
   });
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
-    int timestamp = post.timeCreated;
+    int timestamp = widget.post.timeCreated;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDate = "${date.month}/${date.day}/${date.year}";
+    String formattedDate = "${date.day}/${date.month}/${date.year}";
 
-    void _confirmDelete(BuildContext context) {
+    void confirmDelete(BuildContext context) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -29,13 +37,17 @@ class PostCard extends StatelessWidget {
           content: const Text("Are you sure you want to delete this post?"),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
               onPressed: () async {
-                await PostService().deletePost(post.id);
-                Navigator.pop(context);
+                await postService.deletePost(widget.post.id);
+                context.pop();
+                Helpers.showSuccessSnackbar(
+                  context,
+                  "Post Deleted Successfully",
+                );
               },
               child: const Text("Delete"),
             ),
@@ -61,7 +73,7 @@ class PostCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      post.createdUser.name,
+                      widget.post.createdUser.name,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -74,19 +86,19 @@ class PostCard extends StatelessWidget {
                   ],
                 ),
                 Spacer(),
-                if (enableDeleteButton)
+                if (widget.enableDeleteButton)
                   IconButton(
                     onPressed: () {
-                      _confirmDelete(context);
+                      confirmDelete(context);
                     },
                     icon: Icon(Icons.delete),
                   ),
-                if (enableEditButton)
+                if (widget.enableEditButton)
                   IconButton(
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (context) => EditPostDialog(post: post),
+                        builder: (context) => EditPostDialog(post: widget.post),
                       );
                     },
                     icon: Icon(Icons.edit),
@@ -98,18 +110,18 @@ class PostCard extends StatelessWidget {
 
             /// POST TITLE
             Text(
-              post.title,
+              widget.post.title,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
 
             const SizedBox(height: 6),
 
             /// POST CONTENT
-            Text(post.content, style: TextStyle(fontSize: 14)),
+            Text(widget.post.content, style: TextStyle(fontSize: 14)),
 
             const SizedBox(height: 10),
 
-            /// IMAGE (Optional)
+            // //IMAGE (Optional)
             // ClipRRect(
             //   borderRadius: BorderRadius.circular(8),
             //   child: Image.network(
@@ -119,13 +131,12 @@ class PostCard extends StatelessWidget {
             //     fit: BoxFit.cover,
             //   ),
             // ),
-
-            // const SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             /// LIKE & COMMENT COUNT
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text("👍 ${post.likes}"), Text("💬 3 Comments")],
+              children: [Text("👍 5 Likes"), Text("💬 3 Comments")],
             ),
 
             const Divider(height: 20),
@@ -134,10 +145,18 @@ class PostCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                if (enableLikeButton) ...[
-                  PostAction(icon: Icons.thumb_up_alt_outlined, label: "Like"),
+                if (widget.enableLikeButton) ...[
+                  TextButton.icon(
+                    onPressed: () {},
+                    label: Text("Like"),
+                    icon: Icon(Icons.thumb_up_alt_rounded, size: 20),
+                  ),
                 ],
-                PostAction(icon: Icons.comment_outlined, label: "Comment"),
+                TextButton.icon(
+                  onPressed: () {},
+                  label: Text("Comment"),
+                  icon: Icon(Icons.comment_outlined, size: 20),
+                ),
               ],
             ),
           ],

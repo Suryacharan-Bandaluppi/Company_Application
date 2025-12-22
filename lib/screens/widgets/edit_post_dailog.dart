@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
+import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/services/post_service.dart';
+import 'package:go_router/go_router.dart';
 
 class EditPostDialog extends StatefulWidget {
   final PostModel post;
@@ -14,7 +16,7 @@ class EditPostDialog extends StatefulWidget {
 class _EditPostDialogState extends State<EditPostDialog> {
   late TextEditingController titleController;
   late TextEditingController contentController;
- 
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,8 @@ class _EditPostDialogState extends State<EditPostDialog> {
       content: contentController.text.trim(),
     );
 
-    Navigator.pop(context); // close dialog
+    context.pop();
+    Helpers.showSuccessSnackbar(context, "Post Updated Successfully");
   }
 
   @override
@@ -62,13 +65,10 @@ class _EditPostDialogState extends State<EditPostDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           child: const Text("Cancel"),
         ),
-        ElevatedButton(
-          onPressed: updatePost,
-          child: const Text("Update"),
-        ),
+        ElevatedButton(onPressed: updatePost, child: const Text("Update")),
       ],
     );
   }

@@ -1,17 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:generic_company_application/screens/utils/helpers.dart';
+import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/services/post_service.dart';
 
 class AddPostScreen extends StatefulWidget {
-  final user = FirebaseAuth.instance.currentUser?.email ?? "User";
-  AddPostScreen({super.key});
+  const AddPostScreen({super.key});
 
   @override
   State<AddPostScreen> createState() => _AddPostScreenState();
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
+  User user = FirebaseAuth.instance.currentUser!;
+  String get name => user.displayName ?? "UserName";
+  
   final TextEditingController createTextController = TextEditingController();
   final TextEditingController titleTextController = TextEditingController();
 
@@ -24,17 +26,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   void postContent() async {
     if (createTextController.text.trim().isEmpty ||
-        titleTextController.text.trim().isEmpty)
+        titleTextController.text.trim().isEmpty) {
       return;
-
-    await PostService().addPost(
+    }
+    await postService.addPost(
       title: titleTextController.text.trim(),
       content: createTextController.text.trim(),
     );
 
     createTextController.clear();
     titleTextController.clear();
-    Helpers.showSuccessSnackbar(context, "Post added");
+    Helpers.showSuccessSnackbar(context, "Post added Successfully");
   }
 
   @override
@@ -60,7 +62,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.user,
+                            name,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
