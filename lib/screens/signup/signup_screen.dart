@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:generic_company_application/models/user_model.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
+import 'package:generic_company_application/services/local_storage.dart';
+import 'package:generic_company_application/services/user_service.dart';
 import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/screens/widgets/text_fields_widget.dart';
 import 'package:generic_company_application/services/auth_service.dart';
@@ -25,8 +28,6 @@ class _SignUpScreenState extends State<SignupScreen> {
       TextEditingController();
   final TextEditingController otpController = TextEditingController();
 
-
-
   // Static OTP
   final String staticOtp = "123456";
 
@@ -43,11 +44,29 @@ class _SignUpScreenState extends State<SignupScreen> {
       );
 
       if (error == null) {
-        await FirebaseAuth.instance.currentUser?.updateProfile(displayName: userController.text);
+        final firebaseUser = FirebaseAuth.instance.currentUser!;
+
+        await firebaseUser.updateProfile(
+          displayName: userController.text.trim(),
+        );
+
+        final appUser = AppUser(
+          id: firebaseUser.uid,
+          name: userController.text.trim(),
+          email: firebaseUser.email!,
+          role: "Employee", // Change to Admin / Manager when needed
+        );
+
+        await UserService.instance.addUser(appUser);
+
+        await LocalStorage.saveUser(
+          username: appUser.name,
+          email: appUser.email,
+        );
+
         Helpers.showSuccessSnackbar(context, "Signup Successful 🎉");
         context.go(AppRoutes.home);
         _formKey.currentState!.reset();
-
       } else {
         Helpers.showErrorSnackbar(context, error);
       }

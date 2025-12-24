@@ -24,6 +24,9 @@ dependencies:
 
   #Navigation
   go_router: ^17.0.1
+   
+  #Local Storage for username,email.
+  shared_preferences: ^2.5.4
 
 dev_dependencies:
   flutter_test:

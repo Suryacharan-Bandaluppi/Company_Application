@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/widgets/text_fields_widget.dart';
+import 'package:generic_company_application/services/local_storage.dart';
 import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/services/auth_service.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +32,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (error == null) {
+        final user = FirebaseAuth.instance.currentUser;
+
+        await LocalStorage.saveUser(
+          username: user?.displayName ?? "UserName",
+          email: user?.email ?? "Email",
+        );
         Helpers.showSuccessSnackbar(context, "Login Successful ✅");
         context.go(AppRoutes.viewPosts);
         _formKey.currentState!.reset();
@@ -115,7 +123,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               const SizedBox(height: 15),
-
             ],
           ),
         ),

@@ -1,17 +1,42 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
+import 'package:generic_company_application/services/local_storage.dart';
 import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
-class AppDrawer extends StatelessWidget {
-  // final user2 = FirebaseAuth.instance.currentUser?.email ?? "User";
-
-  User user = FirebaseAuth.instance.currentUser!;
-  String get name => user.displayName ?? "UserName";
-  String get email => user.email ?? "email";
+class AppDrawer extends StatefulWidget {
   final VoidCallback logout;
-  AppDrawer({super.key, required this.logout});
+  const AppDrawer({super.key, required this.logout});
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  // User user = FirebaseAuth.instance.currentUser!;
+  // String get name => user.displayName ?? "UserName";
+  // String get email => user.email ?? "email";
+  String? username;
+  String? email;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final storedUsername = await LocalStorage.getUsername();
+    final storedEmail = await LocalStorage.getEmail();
+
+    if (!mounted) return;
+
+    setState(() {
+      username = storedUsername;
+      email = storedEmail;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +61,7 @@ class AppDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      username ?? "UserName",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -44,7 +69,7 @@ class AppDrawer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      email,
+                      email ?? "Email",
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
                   ],
@@ -52,7 +77,6 @@ class AppDrawer extends StatelessWidget {
                 Spacer(),
                 IconButton(
                   onPressed: () {
-                    context.pop();
                     context.push(AppRoutes.profile);
                   },
                   icon: Icon(Icons.edit),
@@ -98,7 +122,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text("Logout", style: TextStyle(color: Colors.red)),
             onTap: () {
-              logout();
+              widget.logout();
             },
           ),
 
