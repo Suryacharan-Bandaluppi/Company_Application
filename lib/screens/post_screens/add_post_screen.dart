@@ -13,7 +13,7 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   User user = FirebaseAuth.instance.currentUser!;
   String get name => user.displayName ?? "UserName";
-  
+
   final TextEditingController createTextController = TextEditingController();
   final TextEditingController titleTextController = TextEditingController();
 
@@ -45,7 +45,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       appBar: AppBar(title: const Text("Create Post"), centerTitle: true),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: 16),
           child: Column(
             children: [
               /// USER INFO CARD
@@ -145,7 +145,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
               /// POST BUTTON
               SizedBox(
-                width: 350,
+                width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: postContent,

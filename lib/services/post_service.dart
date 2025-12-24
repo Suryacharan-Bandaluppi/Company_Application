@@ -46,7 +46,10 @@ class PostService {
     required String title,
     required String content,
   }) async {
-    await _db.child(postId).update({"title": title, "content": content});
+    await _db.child(postId).update({
+      "title": title,
+      "content": content,
+    });
   }
 
   /// DELETE POST

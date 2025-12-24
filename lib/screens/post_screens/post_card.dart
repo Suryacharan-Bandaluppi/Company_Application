@@ -27,7 +27,7 @@ class _PostCardState extends State<PostCard> {
   Widget build(BuildContext context) {
     int timestamp = widget.post.timeCreated;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDate = "${date.day}/${date.month}/${date.year}";
+    String formattedDate = "${date.day}-${date.month}-${date.year}";
 
     void confirmDelete(BuildContext context) {
       showDialog(
@@ -42,8 +42,8 @@ class _PostCardState extends State<PostCard> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await postService.deletePost(widget.post.id);
                 context.pop();
+                await postService.deletePost(widget.post.id);
                 Helpers.showSuccessSnackbar(
                   context,
                   "Post Deleted Successfully",

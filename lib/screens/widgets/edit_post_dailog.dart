@@ -64,10 +64,7 @@ class _EditPostDialogState extends State<EditPostDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => context.pop(),
-          child: const Text("Cancel"),
-        ),
+        TextButton(onPressed: () => context.pop(), child: const Text("Cancel")),
         ElevatedButton(onPressed: updatePost, child: const Text("Update")),
       ],
     );

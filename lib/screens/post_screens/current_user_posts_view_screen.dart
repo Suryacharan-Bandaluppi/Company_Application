@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
 import 'package:generic_company_application/screens/post_screens/post_card.dart';
@@ -13,7 +12,6 @@ class CurrentUserPostsViewScreen extends StatefulWidget {
 
 class _CurrentUserPostsViewScreenState
     extends State<CurrentUserPostsViewScreen> {
-  File? profileImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

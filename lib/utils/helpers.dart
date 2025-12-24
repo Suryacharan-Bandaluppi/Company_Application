@@ -1,15 +1,8 @@
-// /// Show success snackbar
 import 'dart:io';
-
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Helpers {
-  // User user = FirebaseAuth.instance.currentUser!;
-  // static String name =
-  //     FirebaseAuth.instance.currentUser?.displayName ?? "UserName";
-  // static String email = FirebaseAuth.instance.currentUser?.email ?? "Email";
 
   static final ImagePicker _picker = ImagePicker();
 

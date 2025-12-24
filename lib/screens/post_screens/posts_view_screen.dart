@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/post_screens/post_card.dart';
-import 'package:generic_company_application/screens/widgets/expandable_fab_widget.dart';
+import 'package:generic_company_application/services/local_storage.dart';
 import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/screens/widgets/app_drawer.dart';
 import 'package:generic_company_application/services/auth_service.dart';
@@ -116,6 +116,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
     _editPostSubscription?.cancel();
 
     await AuthService().logout();
+    await LocalStorage.clear();
     Helpers.showSuccessSnackbar(context, "Logged Out Successfully ✅");
     context.go(AppRoutes.home);
   }
@@ -147,14 +148,106 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     )
                   : const SizedBox.shrink();
-              // return SizedBox.shrink();
             }
 
             return PostCard(post: posts[index]);
           },
         ),
       ),
-      floatingActionButton: const ExpandableFab(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) {
+              return SafeArea(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.post_add),
+                        title: const Text("Add Post"),
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.push(AppRoutes.addPost);
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.report_problem_outlined),
+                        title: const Text("Add Concern"),
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.push(AppRoutes.addConcern);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        child: SizedBox(
+          height: kBottomNavigationBarHeight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // VIEW POSTS
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  context.push(AppRoutes.currentUserPosts);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.article, size: 24),
+                      SizedBox(height: 2),
+                      Text("View Posts", style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 40), // FAB space
+              // VIEW CONCERNS
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  context.push(AppRoutes.viewConcerns);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.feedback, size: 24),
+                      SizedBox(height: 2),
+                      Text("View Concerns", style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
