@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/routes/app_router.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:generic_company_application/theme/app_theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -19,7 +20,9 @@ class MyApp extends StatelessWidget {
       routerConfig: appRouter,
       title: 'Company Application',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
     );
   }
 }
