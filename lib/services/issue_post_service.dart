@@ -1,8 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:generic_company_application/models/issue_post_model.dart';
 import 'package:generic_company_application/models/user_model.dart';
-import 'package:generic_company_application/screens/concerns/issue_constants.dart';
-import 'package:generic_company_application/screens/concerns/issue_helpers.dart';
+import 'package:generic_company_application/utils/issue_constants.dart';
+import 'package:generic_company_application/utils/issue_helpers.dart';
 
 class IssuePostService {
   IssuePostService._();
@@ -30,7 +30,7 @@ class IssuePostService {
       admin: {"id": admin.id, "name": admin.name, "role": "Admin"},
       status: IssueStatus.pending,
       updatedTimeAt: now,
-      tags: [],
+      tags: ["pending"],
       createdBy: {
         "id": createdBy.id,
         "name": createdBy.name,
@@ -84,5 +84,21 @@ class IssuePostService {
         .map((e) => IssuePost.fromMap(Map<String, dynamic>.from(e)))
         .toList()
       ..sort((a, b) => a.priority.compareTo(b.priority));
+  }
+
+  Future<void> deleteIssue(String issueId) async {
+    await _db.child(issueId).remove();
+  }
+
+  Future<void> updateIssueStatus(
+    String issueId,
+    IssueStatus status,
+    List<String> tags,
+  ) async {
+    await _db.child(issueId).update({
+      "status": status.value,
+      "updatedTimeAt": DateTime.now().millisecondsSinceEpoch,
+      "tags": tags,
+    });
   }
 }
