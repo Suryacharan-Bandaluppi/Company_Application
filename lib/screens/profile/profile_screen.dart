@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/services/local_storage.dart';
-import 'package:generic_company_application/utils/helpers.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,7 +9,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  File? profileImage;
   String? username;
   String? email;
 
@@ -46,16 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundColor: Colors.grey.shade300,
-                    backgroundImage: profileImage != null
-                        ? FileImage(profileImage!)
-                        : null,
-                    child: profileImage == null
-                        ? const Icon(Icons.person)
-                        : null,
-                  ),
+                  CircleAvatar(radius: 22, child: Icon(Icons.person)),
                   SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,19 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   Spacer(),
-                  IconButton(
-                    onPressed: () async {
-                      final image = await Helpers.showProfilePhotoOptions(
-                        context,
-                      );
-                      if (image != null) {
-                        setState(() {
-                          profileImage = image;
-                        });
-                      }
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
                 ],
               ),
             ),

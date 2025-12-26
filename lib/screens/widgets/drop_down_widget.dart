@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 class DropDownWidget extends StatefulWidget {
   final ValueChanged<String> onChanged;
 
-  const DropDownWidget({super.key, required this.onChanged}); 
+  const DropDownWidget({super.key, required this.onChanged});
 
   @override
   State<DropDownWidget> createState() => _DropDownWidgetState();
 }
 
 class _DropDownWidgetState extends State<DropDownWidget> {
-  String dropDownValue = "Technical Issues";
+  String dropDownValue = "Security Issues";
 
   final List<String> issues = [
+    "Security Issues",
+    "Authentication Issues",
     "Technical Issues",
     "Hardware Issues",
+    "Connection Issues"
     "Software Glitches",
-    "Connection Issues",
-    "Authentication Issues",
-    "Security Concern",
     "Malware Concern",
     "Equipment Requests",
   ];

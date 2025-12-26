@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/screens/widgets/drop_down_widget.dart';
 import 'package:generic_company_application/services/issue_post_service.dart';
+import 'package:generic_company_application/services/local_storage.dart';
 import 'package:generic_company_application/services/user_service.dart';
 import 'package:generic_company_application/utils/helpers.dart';
 
@@ -15,6 +16,8 @@ class AddConcernScreen extends StatefulWidget {
 class _AddConcernScreenState extends State<AddConcernScreen> {
   String selectedCategory = "Technical Issues";
   bool isSubmitting = false;
+  String? username;
+  String? email;
 
   final TextEditingController descriptionController = TextEditingController();
 
@@ -24,11 +27,27 @@ class _AddConcernScreenState extends State<AddConcernScreen> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final storedUsername = await LocalStorage.getUsername();
+    final storedEmail = await LocalStorage.getEmail();
+
+    if (!mounted) return;
+
+    setState(() {
+      username = storedUsername;
+      email = storedEmail;
+    });
+  }
+
   Future<void> submitConcern() async {
     if (descriptionController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please describe the issue")),
-      );
+      Helpers.showErrorSnackbar(context, "Please describe the issue");
       return;
     }
 
@@ -36,13 +55,10 @@ class _AddConcernScreenState extends State<AddConcernScreen> {
 
     try {
       /// 1️⃣ Get current logged-in user ID
-      // print("AUTH UID: ${FirebaseAuth.instance.currentUser?.uid}");
       final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      // print("STEP 1: currentUserId fetched");
 
       /// 2️⃣ Fetch current user details
       final createdBy = await UserService.instance.getUserById(currentUserId);
-      // print("STEP 2: createdBy fetched");
 
       if (createdBy == null) {
         throw Exception("User not found");
@@ -50,14 +66,13 @@ class _AddConcernScreenState extends State<AddConcernScreen> {
 
       /// 3️⃣ Fetch managers
       final managers = await UserService.instance.getManagers();
-      // print("STEP 3: managers fetched: ${managers.length}");
+
       if (managers.isEmpty) {
         throw Exception("No manager available");
       }
 
       /// 4️⃣ Fetch admins
       final admins = await UserService.instance.getAdmins();
-      // print("STEP 4: admins fetched: ${admins.length}");
 
       if (admins.isEmpty) {
         throw Exception("No admin available");
@@ -65,7 +80,6 @@ class _AddConcernScreenState extends State<AddConcernScreen> {
 
       final manager = managers.first;
       final admin = admins.first;
-      // print("STEP 5: calling addIssue()");
 
       /// 5️⃣ Create Issue
       await IssuePostService.instance.addIssue(
@@ -78,7 +92,7 @@ class _AddConcernScreenState extends State<AddConcernScreen> {
       descriptionController.clear();
 
       /// 6️⃣ Success
-      Helpers.showSuccessSnackbar(context, "Concern submitted successfully ✅");
+      Helpers.showSuccessSnackbar(context, "Concern submitted successfully");
     } catch (e) {
       Helpers.showErrorSnackbar(context, "Failed to submit concern: $e");
     } finally {
@@ -105,8 +119,8 @@ class _AddConcernScreenState extends State<AddConcernScreen> {
                 ),
                 child: ListTile(
                   leading: const CircleAvatar(child: Icon(Icons.person)),
-                  title: const Text(
-                    "User Name",
+                  title: Text(
+                    username ?? "User Name",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: const Text("Public"),

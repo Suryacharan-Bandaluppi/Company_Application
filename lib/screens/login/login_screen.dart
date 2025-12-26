@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
           username: user?.displayName ?? "UserName",
           email: user?.email ?? "Email",
         );
-        Helpers.showSuccessSnackbar(context, "Login Successful ✅");
+        Helpers.showSuccessSnackbar(context, "Login Successful ");
         context.go(AppRoutes.viewPosts);
         _formKey.currentState!.reset();
       } else {

@@ -27,6 +27,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   void postContent() async {
     if (createTextController.text.trim().isEmpty ||
         titleTextController.text.trim().isEmpty) {
+      Helpers.showErrorSnackbar(context, "Please enter title and description");
       return;
     }
     await postService.addPost(
@@ -45,13 +46,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
       appBar: AppBar(title: const Text("Create Post"), centerTitle: true),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(10),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// USER INFO CARD
               Card(
                 margin: const EdgeInsets.all(10),
                 elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(

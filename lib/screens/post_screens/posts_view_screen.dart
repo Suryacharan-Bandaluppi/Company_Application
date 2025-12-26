@@ -117,7 +117,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
 
     await AuthService().logout();
     await LocalStorage.clear();
-    Helpers.showSuccessSnackbar(context, "Logged Out Successfully ✅");
+    Helpers.showSuccessSnackbar(context, "Logged Out Successfully");
     context.go(AppRoutes.home);
   }
 
@@ -174,7 +174,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
                         leading: const Icon(Icons.post_add),
                         title: const Text("Add Post"),
                         onTap: () {
-                          Navigator.pop(context);
+                          context.pop();
                           context.push(AppRoutes.addPost);
                         },
                       ),
@@ -182,7 +182,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
                         leading: const Icon(Icons.report_problem_outlined),
                         title: const Text("Add Concern"),
                         onTap: () {
-                          Navigator.pop(context);
+                          context.pop();
                           context.push(AppRoutes.addConcern);
                         },
                       ),

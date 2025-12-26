@@ -1,82 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:generic_company_application/utils/issue_constants.dart';
+import 'package:go_router/go_router.dart';
 
 class Helpers {
 
-  static final ImagePicker _picker = ImagePicker();
-
-  static Future<File?> pickFromGallery() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 70,
-    );
-
-    return image != null ? File(image.path) : null;
-  }
-
-  static Future<File?> pickFromCamera() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 70,
-    );
-
-    return image != null ? File(image.path) : null;
-  }
-
-  static Future<File?> showProfilePhotoOptions(BuildContext context) async {
-    return await showModalBottomSheet<File?>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Edit Profile Photo",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text("Take Photo"),
-                onTap: () async {
-                  final image = await pickFromCamera();
-                  Navigator.pop(context, image);
-                },
-              ),
-
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text("Choose from Gallery"),
-                onTap: () async {
-                  final image = await pickFromGallery();
-                  Navigator.pop(context, image);
-                },
-              ),
-
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text(
-                  "Remove Photo",
-                  style: TextStyle(color: Colors.red),
-                ),
-                onTap: () {
-                  Navigator.pop(context, null);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
+  /// show success snackbar
   static void showSuccessSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -98,5 +26,56 @@ class Helpers {
         duration: const Duration(seconds: 3),
       ),
     );
+  }
+
+  ///show Dialog box for the concern card buttons
+  static Future<bool?> showDialogBox(
+    BuildContext context,
+    String titleText,
+    String contentText,
+    String btn1Text,
+    String btn2Text,
+  ) {
+    return showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(titleText),
+            IconButton(
+              onPressed: () {
+                context.pop();
+              },
+              icon: Icon(Icons.cancel),
+            ),
+          ],
+        ),
+        content: Text(contentText),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(false),
+            child: Text(btn1Text),
+          ),
+          ElevatedButton(
+            onPressed: () => context.pop(true),
+            child: Text(btn2Text),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static bool canDeleteIssue(String role, IssueStatus status) {
+    return role == "Employee" && status == IssueStatus.pending;
+  }
+
+  static bool canManagerApprove(String role, IssueStatus status) {
+    return role == "Manager" && status == IssueStatus.pending;
+  }
+
+  static bool canAdminApprove(String role, IssueStatus status) {
+    return role == "Admin" && status == IssueStatus.managerApproved;
   }
 }

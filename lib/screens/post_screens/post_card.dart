@@ -31,6 +31,7 @@ class _PostCardState extends State<PostCard> {
 
     void confirmDelete(BuildContext context) {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) => AlertDialog(
           title: const Text("Delete Post"),
@@ -98,6 +99,7 @@ class _PostCardState extends State<PostCard> {
                     onPressed: () {
                       showDialog(
                         context: context,
+                        barrierDismissible: false,
                         builder: (context) => EditPostDialog(post: widget.post),
                       );
                     },

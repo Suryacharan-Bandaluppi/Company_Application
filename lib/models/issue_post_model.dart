@@ -1,4 +1,4 @@
-import 'package:generic_company_application/screens/concerns/issue_constants.dart';
+import 'package:generic_company_application/utils/issue_constants.dart';
 
 class IssuePost {
   final String id;

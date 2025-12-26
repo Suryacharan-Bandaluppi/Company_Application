@@ -64,7 +64,7 @@ class _SignUpScreenState extends State<SignupScreen> {
           email: appUser.email,
         );
 
-        Helpers.showSuccessSnackbar(context, "Signup Successful 🎉");
+        Helpers.showSuccessSnackbar(context, "Signup Successful ");
         context.go(AppRoutes.home);
         _formKey.currentState!.reset();
       } else {

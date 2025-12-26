@@ -22,7 +22,7 @@ final GoRouter appRouter = GoRouter(
     }
 
     // User logged in
-    if (user != null && isAtHome) {
+    if (isAtHome) {
       return AppRoutes.viewPosts;
     }
 
