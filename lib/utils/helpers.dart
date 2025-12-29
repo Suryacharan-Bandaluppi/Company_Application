@@ -3,7 +3,6 @@ import 'package:generic_company_application/utils/issue_constants.dart';
 import 'package:go_router/go_router.dart';
 
 class Helpers {
-
   /// show success snackbar
   static void showSuccessSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -77,5 +76,9 @@ class Helpers {
 
   static bool canAdminApprove(String role, IssueStatus status) {
     return role == "Admin" && status == IssueStatus.managerApproved;
+  }
+
+  static bool managerApprovalStillPending(String role, IssueStatus status) {
+    return role == "Admin" && status == IssueStatus.pending;
   }
 }

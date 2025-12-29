@@ -6,9 +6,9 @@ import 'package:generic_company_application/screens/profile/profile_screen.dart'
 import 'package:go_router/go_router.dart';
 
 import '../screens/home/home_screen.dart';
-import '../screens/post_screens/posts_view_screen.dart';
-import '../screens/post_screens/add_post_screen.dart';
-import '../screens/post_screens/current_user_posts_view_screen.dart';
+import '../screens/posts/posts_view_screen.dart';
+import '../screens/posts/add_post_screen.dart';
+import '../screens/posts/current_user_posts_view_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: AppRoutes.home,

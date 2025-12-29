@@ -17,7 +17,7 @@ class AppTheme {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -46,7 +46,7 @@ class AppTheme {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(

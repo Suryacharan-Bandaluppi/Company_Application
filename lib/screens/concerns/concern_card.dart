@@ -39,7 +39,7 @@ class _ConcernCardState extends State<ConcernCard> {
   }
 
   Widget _buildActionButtons(BuildContext context) {
-    final role = currentUser?.role ?? "NO ROLE"; 
+    final role = currentUser?.role ?? "NO ROLE";
 
     if (Helpers.canDeleteIssue(role, widget.issue.status)) {
       return ElevatedButton(
@@ -114,6 +114,13 @@ class _ConcernCardState extends State<ConcernCard> {
           }
         },
         child: const Text("Approve"),
+      );
+    }
+
+    if (Helpers.managerApprovalStillPending(role, widget.issue.status)) {
+      return Text(
+        "Manager Approval Pending",
+        style: TextStyle(color: Colors.red),
       );
     }
     return const SizedBox.shrink();
