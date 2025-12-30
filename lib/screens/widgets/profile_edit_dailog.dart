@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:generic_company_application/services/user_service.dart';
+import 'package:generic_company_application/utils/helpers.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfileEditDailog extends StatefulWidget {
@@ -44,17 +47,31 @@ class _ProfileEditDailogState extends State<ProfileEditDailog> {
             decoration: const InputDecoration(labelText: "User Name"),
           ),
           const SizedBox(height: 10),
-          TextField(
-            controller: emailController,
-            decoration: const InputDecoration(labelText: "Email"),
-          ),
         ],
       ),
       actions: [
         TextButton(onPressed: () => context.pop(), child: const Text("Cancel")),
         ElevatedButton(
-          onPressed: () {
-            context.pop();
+          onPressed: () async {
+            final newName = userNameController.text.trim();
+
+            try {
+              await UserService.instance.updateUserProfile(
+                userId: FirebaseAuth.instance.currentUser!.uid,
+                name: newName,
+                email: emailController.text,
+              );
+              context.pop(true);
+              Helpers.showSuccessSnackbar(
+                context,
+                "UserName Updated Successfully",
+              );
+            } catch (e) {
+              Helpers.showSuccessSnackbar(
+                context,
+                "Error in Updating Profile $e",
+              );
+            }
           },
           child: const Text("Update"),
         ),

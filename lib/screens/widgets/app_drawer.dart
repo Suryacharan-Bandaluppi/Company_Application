@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
+import 'package:generic_company_application/screens/widgets/profile_edit_dailog.dart';
 import 'package:generic_company_application/services/local_storage.dart';
 import 'package:go_router/go_router.dart';
 
@@ -78,8 +79,19 @@ class _AppDrawerState extends State<AppDrawer> {
                 ),
                 Spacer(),
                 IconButton(
-                  onPressed: () {
-                    context.push(AppRoutes.profile);
+                  onPressed: () async {
+                    context.pop();
+                    final result = await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => ProfileEditDailog(
+                        username: username ?? "UserName",
+                        email: email ?? "Email",
+                      ),
+                    );
+                    if (result == true) {
+                      _loadUser();
+                    }
                   },
                   icon: Icon(Icons.edit),
                   color: Colors.white,

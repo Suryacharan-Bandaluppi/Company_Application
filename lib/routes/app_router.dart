@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/concerns/add_concern_screen.dart';
 import 'package:generic_company_application/screens/concerns/concerns_screen.dart';
-import 'package:generic_company_application/screens/profile/profile_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/home/home_screen.dart';
@@ -33,10 +32,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.home,
       builder: (context, state) => const HomeScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.profile,
-      builder: (context, state) => ProfileScreen(),
     ),
 
     GoRoute(
