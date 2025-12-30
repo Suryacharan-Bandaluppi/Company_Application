@@ -76,7 +76,7 @@ class _SignUpScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Container(
         padding: const EdgeInsets.all(30),
         child: Form(
           key: _formKey,
