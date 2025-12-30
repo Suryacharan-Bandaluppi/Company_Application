@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/posts/post_card.dart';
 import 'package:generic_company_application/services/local_storage.dart';
+import 'package:generic_company_application/services/user_service.dart';
 import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/screens/widgets/app_drawer.dart';
 import 'package:generic_company_application/services/auth_service.dart';
@@ -24,6 +26,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
   StreamSubscription<PostModel>? _newPostSubscription;
   StreamSubscription<String>? _deletePostSubscription;
   StreamSubscription<PostModel>? _editPostSubscription;
+  String userId = FirebaseAuth.instance.currentUser?.uid ?? "null";
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -58,7 +61,6 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
       _lastTimeCreated = newPosts.last.timeCreated;
       posts.addAll(newPosts);
 
-      // START realtime listener only once
       if (posts.isNotEmpty && _newPostSubscription == null) {
         _startRealtimeListener(posts.first.timeCreated);
         _startDeleteListener();
@@ -121,6 +123,22 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
     context.go(AppRoutes.home);
   }
 
+  void deleteAccount() async {
+    _newPostSubscription?.cancel();
+    _deletePostSubscription?.cancel();
+    _editPostSubscription?.cancel();
+
+    // Delete user data from database first (while still authenticated)
+    await UserService.instance.deleteUser(userId);
+    // Delete Firebase auth account 
+    await AuthService().deleteAccount();
+    // Clear local storage
+    await LocalStorage.clear();
+    
+    Helpers.showSuccessSnackbar(context, "Account Deleted Successfully");
+    context.go(AppRoutes.home);
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -134,7 +152,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Posts")),
-      drawer: AppDrawer(logout: logoutbutton),
+      drawer: AppDrawer(logout: logoutbutton, delete: deleteAccount),
       body: RefreshIndicator(
         onRefresh: _refreshPosts,
         child: ListView.builder(
@@ -198,7 +216,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
 
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
+        notchMargin: 6,
         child: SizedBox(
           height: kBottomNavigationBarHeight,
           child: Row(
@@ -224,7 +242,7 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
                 ),
               ),
 
-              const SizedBox(width: 40), // FAB space
+              const SizedBox(width: 40),
               // VIEW CONCERNS
               InkWell(
                 borderRadius: BorderRadius.circular(12),

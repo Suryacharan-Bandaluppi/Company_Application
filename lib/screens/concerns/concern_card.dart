@@ -123,6 +123,29 @@ class _ConcernCardState extends State<ConcernCard> {
         style: TextStyle(color: Colors.red),
       );
     }
+    if (Helpers.canManagerDelete(role, widget.issue.status)) {
+      return Row(
+        children: [
+          Text(
+            "Issue Resolved",
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+            onPressed: () async {
+              await IssuePostService.instance.deleteIssue(widget.issue.id);
+            },
+            icon: Icon(Icons.delete, size: 20),
+          ),
+        ],
+      );
+    }
+    if (Helpers.isAdminApproved(role, widget.issue.status)) {
+      return Text(
+        "Issue Resolved",
+        style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+      );
+    }
+
     return const SizedBox.shrink();
   }
 
@@ -164,7 +187,6 @@ class _ConcernCardState extends State<ConcernCard> {
                     ],
                   ),
                 ),
-
                 _buildActionButtons(context),
               ],
             ),
@@ -221,7 +243,7 @@ class _ConcernCardState extends State<ConcernCard> {
                 const Expanded(child: Divider(thickness: 2)),
                 TimeLineWidget(label: "Admin", isCompleted: isAdminApproved),
                 Expanded(child: Divider(thickness: 2)),
-                TimeLineWidget(label: "Resolved", isCompleted: false),
+                TimeLineWidget(label: "Resolved", isCompleted: isAdminApproved),
               ],
             ),
           ],

@@ -7,7 +7,7 @@ class PostModel {
   final String content;
   final String? image;
   final String? video;
-  final int likes;
+  final Map<String, bool> likes;
   final List<String> comments;
   final CreatedUser createdUser;
 
@@ -53,7 +53,7 @@ class PostModel {
       content: map["content"],
       image: map["image"],
       video: map["video"],
-      likes: map["likes"],
+      likes: Map<String, bool>.from(map['likes'] ?? {}),
       comments: List<String>.from(map["comments"] ?? []),
       createdUser: CreatedUser.fromMap(map["createdUser"]),
     );

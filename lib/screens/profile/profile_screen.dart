@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:generic_company_application/screens/widgets/profile_edit_dailog.dart';
 import 'package:generic_company_application/services/local_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -65,7 +66,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   Spacer(),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => ProfileEditDailog(
+                          username: username ?? "UserName",
+                          email: email ?? "Email",
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
                 ],
               ),
             ),

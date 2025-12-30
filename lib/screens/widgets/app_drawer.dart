@@ -1,4 +1,3 @@
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/services/local_storage.dart';
@@ -7,7 +6,8 @@ import 'package:go_router/go_router.dart';
 // ignore: must_be_immutable
 class AppDrawer extends StatefulWidget {
   final VoidCallback logout;
-  const AppDrawer({super.key, required this.logout});
+  final VoidCallback delete;
+  const AppDrawer({super.key, required this.logout, required this.delete});
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();
@@ -15,8 +15,10 @@ class AppDrawer extends StatefulWidget {
 
 class _AppDrawerState extends State<AppDrawer> {
   // User user = FirebaseAuth.instance.currentUser!;
+  // String get userId => user.uid;
   // String get name => user.displayName ?? "UserName";
   // String get email => user.email ?? "email";
+
   String? username;
   String? email;
 
@@ -90,7 +92,7 @@ class _AppDrawerState extends State<AppDrawer> {
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
+              children: [
                 _StatItem(title: "Posts", value: "5"),
                 _StatItem(title: "Concerns", value: "3"),
               ],
@@ -123,6 +125,37 @@ class _AppDrawerState extends State<AppDrawer> {
             title: const Text("Logout", style: TextStyle(color: Colors.red)),
             onTap: () {
               widget.logout();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete, color: Colors.red),
+            title: const Text(
+              "Delete Account",
+              style: TextStyle(color: Colors.red),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => AlertDialog(
+                  title: const Text("Delete Profile"),
+                  content: Text(
+                    "Are you sure!!! This will permanently delete your account",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => context.pop(),
+                      child: const Text("Cancel"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        widget.delete();
+                      },
+                      child: const Text("Delete"),
+                    ),
+                  ],
+                ),
+              );
             },
           ),
 

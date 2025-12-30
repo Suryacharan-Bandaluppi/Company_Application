@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
 import 'package:generic_company_application/utils/helpers.dart';
@@ -25,9 +26,13 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
+    final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
     int timestamp = widget.post.timeCreated;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
     String formattedDate = "${date.day}-${date.month}-${date.year}";
+    bool isLiked = widget.post.likes.containsKey(currentUserId);
+    int likeCount = widget.post.likes.length;
 
     void confirmDelete(BuildContext context) {
       showDialog(
@@ -123,62 +128,97 @@ class _PostCardState extends State<PostCard> {
 
             const SizedBox(height: 10),
 
-            // //IMAGE (Optional)
-            // ClipRRect(
-            //   borderRadius: BorderRadius.circular(8),
-            //   child: Image.network(
-            //     "https://picsum.photos/500/300",
-            //     height: 180,
-            //     width: double.infinity,
-            //     fit: BoxFit.cover,
-            //   ),
-            // ),
             const SizedBox(height: 10),
 
             /// LIKE & COMMENT COUNT
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text("👍 5 Likes"), Text("💬 3 Comments")],
+              children: [
+                likeCount == 1
+                    ? Row(
+                        spacing: 5,
+                        children: [
+                          Icon(
+                            Icons.favorite,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          Text(
+                            "$likeCount Like",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        spacing: 5,
+                        children: [
+                          Icon(
+                            Icons.favorite,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          Text(
+                            "$likeCount Likes",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                Row(
+                  spacing: 5,
+                  children: [
+                    Icon(
+                      Icons.comment,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    Text("5 comments", style: TextStyle(fontSize: 16)),
+                  ],
+                ),
+              ],
             ),
 
             const Divider(height: 20),
 
             /// ACTION BUTTONS
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 if (widget.enableLikeButton) ...[
-                  TextButton.icon(
-                    onPressed: () {},
-                    label: Text("Like"),
-                    icon: Icon(Icons.thumb_up_alt_rounded, size: 20),
+                  IconButton(
+                    onPressed: () async {
+                      await postService.toggleLike(
+                        postId: widget.post.id,
+                        userId: currentUserId,
+                        isLiked: isLiked,
+                      );
+                    },
+                    // label: isLiked ? Text("Like") : Text("DisLike"),
+                    icon: Icon(
+                      color: Theme.of(context).colorScheme.primary,
+                      isLiked ? Icons.favorite : Icons.favorite_border,
+                      size: 25,
+                    ),
                   ),
                 ],
-                TextButton.icon(
-                  onPressed: () {},
-                  label: Text("Comment"),
-                  icon: Icon(Icons.comment_outlined, size: 20),
+                IconButton(
+                  onPressed: () {
+                    Helpers.showSuccessSnackbar(
+                      context,
+                      "Comment Section Coming Soon",
+                    );
+                  },
+
+                  icon: Icon(
+                    color: Theme.of(context).colorScheme.primary,
+                    Icons.comment_outlined,
+                    size: 25,
+                  ),
                 ),
               ],
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-/// Reusable Action Button
-class PostAction extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const PostAction({super.key, required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [Icon(icon, size: 20), const SizedBox(width: 6), Text(label)],
     );
   }
 }

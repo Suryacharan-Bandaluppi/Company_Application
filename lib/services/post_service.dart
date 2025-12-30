@@ -29,7 +29,7 @@ class PostService {
       content: content,
       image: "",
       video: "",
-      likes: 0,
+      likes: {},
       comments: [],
       createdUser: CreatedUser(
         id: user.uid,
@@ -46,10 +46,7 @@ class PostService {
     required String title,
     required String content,
   }) async {
-    await _db.child(postId).update({
-      "title": title,
-      "content": content,
-    });
+    await _db.child(postId).update({"title": title, "content": content});
   }
 
   /// DELETE POST
@@ -126,6 +123,20 @@ class PostService {
       (event) =>
           PostModel.fromMap(event.snapshot.value as Map<dynamic, dynamic>),
     );
+  }
+
+  Future<void> toggleLike({
+    required String postId,
+    required String userId,
+    required bool isLiked,
+  }) async {
+    final ref = _db.child(postId).child("likes");
+
+    if (isLiked) {
+      await ref.child(userId).remove();
+    } else {
+      await ref.child(userId).set(true);
+    }
   }
 }
 

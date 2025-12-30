@@ -17,7 +17,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
     "Authentication Issues",
     "Technical Issues",
     "Hardware Issues",
-    "Connection Issues"
+    "Connection Issues",
     "Software Glitches",
     "Malware Concern",
     "Equipment Requests",

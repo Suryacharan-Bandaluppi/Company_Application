@@ -60,22 +60,6 @@ class IssuePostService {
     }
   }
 
-  Stream<List<IssuePost>> fetchIssuesForManager(String managerId) {
-    return _db
-        .orderByChild("manager/id")
-        .equalTo(managerId)
-        .onValue
-        .map(_mapIssues);
-  }
-
-  Stream<List<IssuePost>> fetchIssuesForAdmin(String adminId) {
-    return _db
-        .orderByChild("admin/id")
-        .equalTo(adminId)
-        .onValue
-        .map(_mapIssues);
-  }
-
   List<IssuePost> _mapIssues(DatabaseEvent event) {
     final data = event.snapshot.value as Map?;
     if (data == null) return [];
@@ -97,7 +81,7 @@ class IssuePostService {
   ) async {
     await _db.child(issueId).update({
       "status": status.value,
-      "updatedTimeAt": DateTime.now().millisecondsSinceEpoch,
+      "updated_time_at": DateTime.now().millisecondsSinceEpoch,
       "tags": tags,
     });
   }

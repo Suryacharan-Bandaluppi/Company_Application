@@ -81,4 +81,13 @@ class Helpers {
   static bool managerApprovalStillPending(String role, IssueStatus status) {
     return role == "Admin" && status == IssueStatus.pending;
   }
+
+  static bool canManagerDelete(String role, IssueStatus status) {
+    return role == "Manager" && status == IssueStatus.adminApproved;
+  }
+
+  static bool isAdminApproved(String role, IssueStatus status) {
+    return status == IssueStatus.adminApproved &&
+        (role == "Admin" || role == "Employee");
+  }
 }

@@ -42,4 +42,8 @@ class UserService {
     final data = snapshot.value as Map;
     return data.entries.map((e) => AppUser.fromMap(e.value, e.key)).toList();
   }
+
+  Future<void> deleteUser(String userId) async {
+    await _db.child(userId).remove();
+  }
 }
