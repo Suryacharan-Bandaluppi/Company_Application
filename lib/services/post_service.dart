@@ -83,6 +83,27 @@ class PostService {
     });
   }
 
+  //Get Current User Posts Count
+  // Stream<int> getCurrentUserPostCount() {
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if (user == null) return Stream.value(0);
+
+  //   return _db.orderByChild("user_id").equalTo(user.uid).onValue.map((event) {
+  //     final data = event.snapshot.value as Map?;
+  //     if (data == null) return 0;
+  //     return data.length;
+  //   });
+  // }
+  Future<int> getCurrentUserPostCount() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return 0;
+
+    final snapshot = await _db.orderByChild("user_id").equalTo(user.uid).get();
+
+    final data = snapshot.value as Map?;
+    return data?.length ?? 0;
+  }
+
   Future<List<PostModel>> fetchPosts({
     int limit = 10,
     int? lastTimeCreated,

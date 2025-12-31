@@ -14,7 +14,7 @@ class AddConcernScreen extends StatefulWidget {
 }
 
 class _AddConcernScreenState extends State<AddConcernScreen> {
-  String selectedCategory = "Technical Issues";
+  String selectedCategory = "Security Issues";
   bool isSubmitting = false;
   String? username;
   String? email;

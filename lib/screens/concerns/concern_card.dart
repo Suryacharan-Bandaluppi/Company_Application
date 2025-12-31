@@ -52,6 +52,10 @@ class _ConcernCardState extends State<ConcernCard> {
             "Delete",
           );
           if (confirm == true) {
+            Helpers.showSuccessSnackbar(
+              context,
+              "Concern Deleted Successfully",
+            );
             await IssuePostService.instance.deleteIssue(widget.issue.id);
           }
         },
@@ -172,26 +176,33 @@ class _ConcernCardState extends State<ConcernCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      StreamBuilder<AppUser>(
-                        stream: UserService.instance.getUserByIdForPosts(
-                          widget.issue.createdBy['id'],
+                      Text(
+                        widget.issue.createdBy['name'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Text("Loading...");
-                          }
-
-                          final user = snapshot.data!;
-
-                          return Text(
-                            user.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        },
                       ),
+                      // StreamBuilder<AppUser>(
+                      //   stream: UserService.instance.getUserByIdForPosts(
+                      //     widget.issue.userId,
+                      //   ),
+                      //   builder: (context, snapshot) {
+                      //     if (!snapshot.hasData) {
+                      //       return const Text("Loading...");
+                      //     }
+
+                      //     final user = snapshot.data!;
+
+                      //     return Text(
+                      //       user.name,
+                      //       style: const TextStyle(
+                      //         fontSize: 16,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                       SizedBox(height: 2),
                       Text(
                         widget.issue.createdBy['role'],

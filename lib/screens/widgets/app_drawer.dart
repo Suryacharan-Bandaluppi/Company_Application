@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/widgets/profile_edit_dailog.dart';
+import 'package:generic_company_application/services/issue_post_service.dart';
 import 'package:generic_company_application/services/local_storage.dart';
+import 'package:generic_company_application/services/post_service.dart';
 import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
@@ -15,10 +17,7 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  // User user = FirebaseAuth.instance.currentUser!;
-  // String get userId => user.uid;
-  // String get name => user.displayName ?? "UserName";
-  // String get email => user.email ?? "email";
+  late Future<Map<String, int>> _countsFuture;
 
   String? username;
   String? email;
@@ -27,6 +26,14 @@ class _AppDrawerState extends State<AppDrawer> {
   void initState() {
     super.initState();
     _loadUser();
+    _loadCounts();
+  }
+
+  void _loadCounts() {
+    _countsFuture = Future.wait([
+      postService.getCurrentUserPostCount(),
+      IssuePostService.instance.getIssueCountForCurrentUser(),
+    ]).then((values) => {'posts': values[0], 'issues': values[1]});
   }
 
   Future<void> _loadUser() async {
@@ -102,12 +109,77 @@ class _AppDrawerState extends State<AppDrawer> {
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _StatItem(title: "Posts", value: "5"),
-                _StatItem(title: "Concerns", value: "3"),
-              ],
+            child: FutureBuilder<Map<String, int>>(
+              future: _countsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: const [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ],
+                  );
+                }
+
+                if (!snapshot.hasData) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: const [
+                      Text("0", style: TextStyle(fontSize: 18)),
+                      Text("0", style: TextStyle(fontSize: 18)),
+                    ],
+                  );
+                }
+
+                final counts = snapshot.data!;
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          counts['posts'].toString(),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          "Posts",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          counts['issues'].toString(),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          "Concerns",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
 
@@ -118,6 +190,7 @@ class _AppDrawerState extends State<AppDrawer> {
             leading: const Icon(Icons.article_outlined),
             title: const Text("Posts"),
             onTap: () {
+              context.pop();
               context.push(AppRoutes.currentUserPosts);
             },
           ),
@@ -125,6 +198,7 @@ class _AppDrawerState extends State<AppDrawer> {
             leading: const Icon(Icons.description),
             title: const Text("Concerns"),
             onTap: () {
+              context.pop();
               context.push(AppRoutes.viewConcerns);
             },
           ),
@@ -180,27 +254,6 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  final String title;
-  final String value;
-
-  const _StatItem({required this.title, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Text(title, style: const TextStyle(color: Colors.grey)),
-      ],
     );
   }
 }

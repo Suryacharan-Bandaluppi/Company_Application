@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
-import 'package:generic_company_application/models/user_model.dart';
-import 'package:generic_company_application/services/user_service.dart';
+// import 'package:generic_company_application/models/user_model.dart';
+// import 'package:generic_company_application/services/user_service.dart';
+// import 'package:generic_company_application/models/user_model.dart';
+// import 'package:generic_company_application/services/user_service.dart';
 import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/screens/widgets/edit_post_dailog.dart';
 import 'package:generic_company_application/services/post_service.dart';
@@ -80,26 +82,33 @@ class _PostCardState extends State<PostCard> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    StreamBuilder<AppUser>(
-                      stream: UserService.instance.getUserByIdForPosts(
-                        widget.post.createdUser.id,
+                    Text(
+                      widget.post.createdUser.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Text("Loading...");
-                        }
-
-                        final user = snapshot.data!;
-
-                        return Text(
-                          user.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
                     ),
+                    // StreamBuilder<AppUser>(
+                    //   stream: UserService.instance.getUserByIdForPosts(
+                    //     widget.post.createdUser.id,
+                    //   ),
+                    //   builder: (context, snapshot) {
+                    //     if (!snapshot.hasData) {
+                    //       return const Text("Loading...");
+                    //     }
+
+                    //     final user = snapshot.data!;
+
+                    //     return Text(
+                    //       user.name,
+                    //       style: const TextStyle(
+                    //         fontSize: 16,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     Text(
                       formattedDate,
                       style: TextStyle(fontSize: 12, color: Colors.grey),
