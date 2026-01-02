@@ -1,10 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
-// import 'package:generic_company_application/models/user_model.dart';
-// import 'package:generic_company_application/services/user_service.dart';
-// import 'package:generic_company_application/models/user_model.dart';
-// import 'package:generic_company_application/services/user_service.dart';
+import 'package:generic_company_application/screens/widgets/comments_bottom_sheet.dart';
 import 'package:generic_company_application/utils/helpers.dart';
 import 'package:generic_company_application/screens/widgets/edit_post_dailog.dart';
 import 'package:generic_company_application/services/post_service.dart';
@@ -37,6 +34,7 @@ class _PostCardState extends State<PostCard> {
     String formattedDate = "${date.day}-${date.month}-${date.year}";
     bool isLiked = widget.post.likes.containsKey(currentUserId);
     int likeCount = widget.post.likes.length;
+    int commentCount = widget.post.comments.length;
 
     void confirmDelete(BuildContext context) {
       showDialog(
@@ -195,7 +193,10 @@ class _PostCardState extends State<PostCard> {
                       size: 20,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    Text("5 comments", style: TextStyle(fontSize: 16)),
+                    Text(
+                      "$commentCount comments",
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
               ],
@@ -226,9 +227,11 @@ class _PostCardState extends State<PostCard> {
                 ],
                 IconButton(
                   onPressed: () {
-                    Helpers.showSuccessSnackbar(
-                      context,
-                      "Comment Section Coming Soon",
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      // backgroundColor: Colors.transparent,
+                      builder: (_) => CommentsBottomSheet(posts: widget.post),
                     );
                   },
 

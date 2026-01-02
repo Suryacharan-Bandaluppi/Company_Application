@@ -8,7 +8,7 @@ class PostModel {
   final String? image;
   final String? video;
   final Map<String, bool> likes;
-  final List<String> comments;
+  final Map<String, dynamic> comments;
   final CreatedUser createdUser;
 
   PostModel({
@@ -24,7 +24,7 @@ class PostModel {
     required this.comments,
     required this.createdUser,
   });
-  
+
   /// Convert Post → Map (for Firebase)
   Map<String, dynamic> toMap() {
     return {
@@ -54,7 +54,7 @@ class PostModel {
       image: map["image"],
       video: map["video"],
       likes: Map<String, bool>.from(map['likes'] ?? {}),
-      comments: List<String>.from(map["comments"] ?? []),
+      comments: Map<String, dynamic>.from(map["comments"] ?? {}),
       createdUser: CreatedUser.fromMap(map["createdUser"]),
     );
   }
@@ -64,22 +64,13 @@ class CreatedUser {
   final String id;
   final String name;
 
-  CreatedUser({
-    required this.id,
-    required this.name,
-  });
+  CreatedUser({required this.id, required this.name});
 
   Map<String, dynamic> toMap() {
-    return {
-      "id": id,
-      "name": name,
-    };
+    return {"id": id, "name": name};
   }
 
   factory CreatedUser.fromMap(Map<dynamic, dynamic> map) {
-    return CreatedUser(
-      id: map["id"],
-      name: map["name"],
-    );
+    return CreatedUser(id: map["id"], name: map["name"]);
   }
 }

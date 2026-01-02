@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
- 
- static const Color primaryColor = Colors.blue;
- 
+  static const Color primaryColor = Colors.blue;
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -18,7 +16,7 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor:primaryColor,
+        backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -32,7 +30,6 @@ class AppTheme {
       ),
     ),
     scaffoldBackgroundColor: Colors.grey.shade50,
-
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -58,7 +55,7 @@ class AppTheme {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: primaryColor  , width: 2),
+        borderSide: const BorderSide(color: primaryColor, width: 2),
       ),
     ),
     scaffoldBackgroundColor: const Color(0xFF121212),

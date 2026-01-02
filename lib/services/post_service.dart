@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../models/post_model.dart';
+import '../models/comment_model.dart';
 
 class PostService {
   // 🔒 Private constructor
@@ -30,7 +31,7 @@ class PostService {
       image: "",
       video: "",
       likes: {},
-      comments: [],
+      comments: <String, dynamic>{},
       createdUser: CreatedUser(
         id: user.uid,
         name: user.displayName ?? "UserName",
@@ -83,17 +84,6 @@ class PostService {
     });
   }
 
-  //Get Current User Posts Count
-  // Stream<int> getCurrentUserPostCount() {
-  //   final user = FirebaseAuth.instance.currentUser;
-  //   if (user == null) return Stream.value(0);
-
-  //   return _db.orderByChild("user_id").equalTo(user.uid).onValue.map((event) {
-  //     final data = event.snapshot.value as Map?;
-  //     if (data == null) return 0;
-  //     return data.length;
-  //   });
-  // }
   Future<int> getCurrentUserPostCount() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return 0;
@@ -146,6 +136,7 @@ class PostService {
     );
   }
 
+  ///Adding likes functionality
   Future<void> toggleLike({
     required String postId,
     required String userId,
@@ -159,6 +150,45 @@ class PostService {
       await ref.child(userId).set(true);
     }
   }
+
+  ///Adding Comments
+  Future<void> addComment({
+    required String postId,
+    required String userId,
+    required String userName,
+    required String comment,
+  }) async {
+    final commentId = FirebaseDatabase.instance
+        .ref("posts/$postId/comments")
+        .push()
+        .key!;
+
+    await FirebaseDatabase.instance
+        .ref("posts/$postId/comments/$commentId")
+        .set({
+          "id": commentId,
+          "user_id": userId,
+          "user_name": userName,
+          "text": comment,
+          "created_at": DateTime.now().millisecondsSinceEpoch,
+        });
+  }
+
+  //Reading Comments
+  Stream<List<CommentModel>> getComments(String postId) {
+    return FirebaseDatabase.instance.ref("posts/$postId/comments").onValue.map((
+      event,
+    ) {
+      final data = event.snapshot.value as Map?;
+      if (data == null) return [];
+
+      return data.values
+          .map((e) => CommentModel.fromMap(Map<String, dynamic>.from(e)))
+          .toList()
+        ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    });
+  }
+
 }
 
 final postService = PostService();

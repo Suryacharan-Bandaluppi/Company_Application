@@ -117,13 +117,13 @@ class _AppDrawerState extends State<AppDrawer> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: const [
                       SizedBox(
-                        width: 20,
-                        height: 20,
+                        width: 50,
+                        height: 50,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                       SizedBox(
-                        width: 20,
-                        height: 20,
+                        width: 50,
+                        height: 50,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
                     ],
