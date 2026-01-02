@@ -194,7 +194,9 @@ class _PostCardState extends State<PostCard> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     Text(
-                      "$commentCount comments",
+                      commentCount == 1
+                          ? "$commentCount comment"
+                          : "$commentCount comments",
                       style: TextStyle(fontSize: 16),
                     ),
                   ],

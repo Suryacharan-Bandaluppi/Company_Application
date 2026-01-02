@@ -130,11 +130,11 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
 
     // Delete user data from database first (while still authenticated)
     await UserService.instance.deleteUser(userId);
-    // Delete Firebase auth account 
+    // Delete Firebase auth account
     await AuthService().deleteAccount();
     // Clear local storage
     await LocalStorage.clear();
-    
+
     Helpers.showSuccessSnackbar(context, "Account Deleted Successfully");
     context.go(AppRoutes.home);
   }
