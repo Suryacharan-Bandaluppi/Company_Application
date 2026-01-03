@@ -20,6 +20,9 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.3,
@@ -27,9 +30,9 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
       expand: false,
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
             children: [
@@ -39,7 +42,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                 width: 40,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: Colors.grey[400],
+                  color: theme.dividerColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -47,7 +50,9 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
               // Title
               Text(
                 "Comments",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
               const SizedBox(height: 10),
@@ -63,25 +68,43 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
                     final comments = snapshot.data!;
                     if (comments.isEmpty) {
-                      return const Center(child: Text("No Comment yet"));
+                      return Text(
+                        "No comments yet",
+                        style: theme.textTheme.bodySmall,
+                      );
                     }
+
                     return ListView.builder(
+                      controller: scrollController,
                       itemCount: comments.length,
                       itemBuilder: (context, index) {
                         final comment = comments[index];
 
                         return ListTile(
                           leading: CircleAvatar(
-                            child: Text(comment.userName[0]),
+                            backgroundColor: colorScheme.primary,
+                            child: Text(
+                              comment.userName[0].toUpperCase(),
+                              style: TextStyle(color: colorScheme.onPrimary),
+                            ),
                           ),
-                          title: Text(comment.userName),
-                          subtitle: Text(comment.text),
+                          title: Text(
+                            comment.userName,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(
+                            comment.text,
+                            style: theme.textTheme.bodyMedium,
+                          ),
                           trailing: Text(
                             dateFormatting(
                               DateTime.fromMillisecondsSinceEpoch(
                                 comment.createdAt,
                               ),
                             ),
+                            style: theme.textTheme.bodySmall,
                           ),
                         );
                       },
@@ -92,7 +115,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
               // Input box
               Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
                     Expanded(
@@ -103,14 +126,12 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                         ),
                       ),
                     ),
-
                     const SizedBox(width: 10),
                     IconButton(
-                      icon: const Icon(Icons.send),
+                      icon: Icon(Icons.send, color: colorScheme.primary),
                       onPressed: () async {
-                        if (commentText.text == "") {
-                          return;
-                        }
+                        if (commentText.text.trim().isEmpty) return;
+
                         await PostService().addComment(
                           postId: widget.posts.id,
                           userId: userId,

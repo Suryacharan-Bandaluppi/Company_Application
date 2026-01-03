@@ -58,7 +58,7 @@ class _AppDrawerState extends State<AppDrawer> {
             width: double.infinity,
             height: MediaQuery.of(context).size.height / 4.5,
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            color: Theme.of(context).primaryColor,
+            color: const Color.fromARGB(255, 39, 109, 145),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
