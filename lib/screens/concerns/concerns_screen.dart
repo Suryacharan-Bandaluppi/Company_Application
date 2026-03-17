@@ -43,7 +43,13 @@ class _ConcernsScreenState extends State<ConcernsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : StreamBuilder<List<IssuePost>>(
               stream: IssuePostService.instance.fetchIssuesForLoggedInUser(
-                currentUser!,
+                currentUser ??
+                    AppUser(
+                      id: "userid",
+                      name: "username",
+                      role: "role",
+                      email: "email",
+                    ),
               ),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {

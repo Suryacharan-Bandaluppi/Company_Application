@@ -78,7 +78,7 @@ class _SignUpScreenState extends State<SignupScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(30),
+          padding: const EdgeInsets.fromLTRB(30, 100, 30, 100),
           child: Form(
             key: _formKey,
             child: Column(
@@ -194,63 +194,63 @@ class _SignUpScreenState extends State<SignupScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                /// Phone Number
-                TextFieldsWidget(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
+                // /// Phone Number
+                // TextFieldsWidget(
+                //   controller: phoneController,
+                //   keyboardType: TextInputType.phone,
 
-                  labelText: "Phone Number",
-                  prefixIcon: Icons.phone,
+                //   labelText: "Phone Number",
+                //   prefixIcon: Icons.phone,
 
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Phone number is required";
-                    }
-                    if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                      return "Enter a valid 10-digit phone number";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 15),
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return "Phone number is required";
+                //     }
+                //     if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                //       return "Enter a valid 10-digit phone number";
+                //     }
+                //     return null;
+                //   },
+                // ),
+                // const SizedBox(height: 15),
 
-                /// Static OTP Display
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    "Your OTP: $staticOtp",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 10),
+                // /// Static OTP Display
+                // Container(
+                //   width: double.infinity,
+                //   padding: const EdgeInsets.all(12),
+                //   decoration: BoxDecoration(
+                //     color: Colors.grey.shade200,
+                //     borderRadius: BorderRadius.circular(8),
+                //   ),
+                //   child: Text(
+                //     "Your OTP: $staticOtp",
+                //     style: const TextStyle(
+                //       fontSize: 16,
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //     textAlign: TextAlign.center,
+                //   ),
+                // ),
+                // const SizedBox(height: 10),
 
-                /// OTP Field
-                TextFieldsWidget(
-                  controller: otpController,
-                  keyboardType: TextInputType.number,
+                // /// OTP Field
+                // TextFieldsWidget(
+                //   controller: otpController,
+                //   keyboardType: TextInputType.number,
 
-                  labelText: "Enter OTP",
-                  prefixIcon: Icons.lock_reset,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "OTP is required";
-                    }
-                    if (value != staticOtp) {
-                      return "Invalid OTP";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 25),
+                //   labelText: "Enter OTP",
+                //   prefixIcon: Icons.lock_reset,
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return "OTP is required";
+                //     }
+                //     if (value != staticOtp) {
+                //       return "Invalid OTP";
+                //     }
+                //     return null;
+                //   },
+                // ),
+                // const SizedBox(height: 25),
 
                 /// Submit Button
                 SizedBox(

@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:generic_company_application/models/post_model.dart';
 import 'package:generic_company_application/routes/app_routes.dart';
 import 'package:generic_company_application/screens/posts/post_card.dart';
+import 'package:generic_company_application/screens/profile/profile_screen.dart';
 import 'package:generic_company_application/services/local_storage.dart';
 import 'package:generic_company_application/services/user_service.dart';
 import 'package:generic_company_application/utils/helpers.dart';
-import 'package:generic_company_application/screens/widgets/app_drawer.dart';
+// import 'package:generic_company_application/screens/widgets/app_drawer.dart';
 import 'package:generic_company_application/services/auth_service.dart';
 import 'package:generic_company_application/services/post_service.dart';
 import 'package:go_router/go_router.dart';
@@ -151,8 +152,32 @@ class _PostsViewScreenState extends State<PostsViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Posts")),
-      drawer: AppDrawer(logout: logoutbutton, delete: deleteAccount),
+      appBar: AppBar(
+        title: const Text("Posts"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                      logout: logoutbutton,
+                      delete: deleteAccount,
+                    ),
+                  ),
+                );
+              },
+              icon: CircleAvatar(
+                radius: 14,
+                backgroundColor: Colors.grey,
+                child: Icon(Icons.person, size: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+      // drawer: AppDrawer(logout: logoutbutton, delete: deleteAccount),
       body: RefreshIndicator(
         onRefresh: _refreshPosts,
         child: ListView.builder(
