@@ -28,6 +28,16 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # 🔢 Set dynamic version (AUTO INCREMENT)
+      - name: Set dynamic version
+        run: |
+          VERSION_NAME=$(grep '^version:' pubspec.yaml | cut -d ' ' -f2 | cut -d '+' -f1)
+          VERSION_CODE=${{ github.run_number }}
+
+          sed -i "s/version: .*/version: ${VERSION_NAME}+${VERSION_CODE}/" pubspec.yaml
+
+          echo "Using version: ${VERSION_NAME}+${VERSION_CODE}"
+
       # 🏗️ Build APK
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
@@ -47,6 +57,6 @@ jobs:
           firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
           --app ${{ secrets.FIREBASE_APP_ID }} \
           --groups "testers" \
-          --release-notes "Automated build from GitHub Actions"
+          --release-notes "Build ${{ github.run_number }} from GitHub Actions"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: service-account.json
